@@ -97,14 +97,11 @@ export const Sender = () => {
   };
 
   const getCameraStreamAndSend = async (pc: RTCPeerConnection) => {
-    console.log("getCameraStreamAndSend is called");
-
     const stream = await navigator.mediaDevices.getUserMedia({
       // for screen share use getDisplayMedia instead of getUserMedia
       video: true,
       audio: true,
     });
-    console.log("stream is -", stream);
 
     // now we just need to add this stream to out pc
     // pc.addTrack(stream.getVideoTracks()[0]);
@@ -123,10 +120,11 @@ export const Sender = () => {
     //   }
     // };
     pc.ontrack = (event) => {
-      const remoteStream = new MediaStream();
-      remoteStream.addTrack(event.track);
-      if (otherPersonVideoRef.current) {
-        otherPersonVideoRef.current.srcObject = remoteStream;
+      console.log("event track is-", event);
+      if (otherPersonVideoRef.current && event.streams[0]) {
+        otherPersonVideoRef.current.srcObject = event.streams[0];
+        setIsConnected(true);
+        setIsConnecting(false);
       }
     };
   };

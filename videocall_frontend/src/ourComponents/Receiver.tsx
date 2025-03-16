@@ -76,10 +76,11 @@ export const Receiver = () => {
     //   }
     // };
     pc.ontrack = (event) => {
-      const remoteStream = new MediaStream();
-      remoteStream.addTrack(event.track);
-      if (videoRefSender.current) {
-        videoRefSender.current.srcObject = remoteStream;
+      console.log("event track is-", event);
+      if (videoRefSender.current && event.streams[0]) {
+        videoRefSender.current.srcObject = event.streams[0]; // ✅ Set full stream
+        setIsConnected(true);
+        setIsConnecting(false);
       }
     };
 
@@ -93,7 +94,9 @@ export const Receiver = () => {
     }
 
     // pc.addTrack(stream.getVideoTracks()[0]);
-    stream.getTracks().forEach((track) => pc.addTrack(track, stream));
+    stream.getTracks().forEach((track) => {
+      pc.addTrack(track, stream); // ✅ Provide stream as second arg
+    });
   }
 
   return (

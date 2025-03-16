@@ -1,8 +1,8 @@
 // import "./App.css";
 import { Route, BrowserRouter, Routes } from "react-router-dom";
-import { Sender } from "./Components/Sender";
-import { Receiver } from "./Components/Receiver";
-import { WelcomeComponent } from "./Components/WelcomeComponent";
+import { Sender } from "./ourComponents/Sender";
+import { Receiver } from "./ourComponents/Receiver";
+import { WelcomeComponent } from "./ourComponents/WelcomeComponent";
 
 function App() {
   return (

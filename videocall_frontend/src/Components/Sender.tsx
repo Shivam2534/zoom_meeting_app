@@ -82,7 +82,7 @@ export const Sender = () => {
     const stream = await navigator.mediaDevices.getUserMedia({
       // for screen share use getDisplayMedia instead of getUserMedia
       video: true,
-      audio: false,
+      audio: true,
     });
     console.log("stream is -", stream);
 

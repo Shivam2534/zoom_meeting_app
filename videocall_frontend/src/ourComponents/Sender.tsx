@@ -33,7 +33,13 @@ export const Sender = () => {
     setIsConnecting(true);
 
     //1. b1 need to create an RTCPeerconnnection
-    const pc = new RTCPeerConnection();
+    // const pc = new RTCPeerConnection();
+    const pc = new RTCPeerConnection({
+      iceServers: [
+        { urls: "stun:stun.l.google.com:19302" }, // public STUN server
+      ],
+    });
+
     console.log("pc-", pc);
 
     // this part of code should be inside onnegotiationneeded, because, initialy over sdp is not having much data , on adding if video , audio , iver sdp also changes , thats why we need to send this offer again and agin whenver sdp is changes , so basically onnegotiationneeded does this task for us
@@ -101,7 +107,8 @@ export const Sender = () => {
     console.log("stream is -", stream);
 
     // now we just need to add this stream to out pc
-    pc.addTrack(stream.getVideoTracks()[0]);
+    // pc.addTrack(stream.getVideoTracks()[0]);
+    stream.getTracks().forEach((track) => pc.addTrack(track, stream));
 
     // adding the same stream to the sender side also
     if (senderVideoRef.current) {
@@ -109,10 +116,17 @@ export const Sender = () => {
     }
 
     // receiving the tracks of other user
+    // pc.ontrack = (event) => {
+    //   console.log("event track is-", event);
+    //   if (otherPersonVideoRef.current) {
+    //     otherPersonVideoRef.current.srcObject = new MediaStream([event.track]);
+    //   }
+    // };
     pc.ontrack = (event) => {
-      console.log("event track is-", event);
+      const remoteStream = new MediaStream();
+      remoteStream.addTrack(event.track);
       if (otherPersonVideoRef.current) {
-        otherPersonVideoRef.current.srcObject = new MediaStream([event.track]);
+        otherPersonVideoRef.current.srcObject = remoteStream;
       }
     };
   };

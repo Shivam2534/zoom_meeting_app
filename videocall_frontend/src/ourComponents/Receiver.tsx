@@ -24,7 +24,12 @@ export const Receiver = () => {
   }, []);
 
   async function startReceiving(socket: WebSocket) {
-    const pc = new RTCPeerConnection();
+    // const pc = new RTCPeerConnection();
+    const pc = new RTCPeerConnection({
+      iceServers: [
+        { urls: "stun:stun.l.google.com:19302" }, // public STUN server
+      ],
+    });
     socket.onmessage = async (event) => {
       console.log("data received-", event.data);
       const data = JSON.parse(event.data);
@@ -62,12 +67,19 @@ export const Receiver = () => {
     };
 
     // when track is added from another user
+    // pc.ontrack = (event) => {
+    //   console.log("event track is-", event);
+    //   if (videoRefSender.current) {
+    //     videoRefSender.current.srcObject = new MediaStream([event.track]);
+    //     setIsConnected(true);
+    //     setIsConnecting(false);
+    //   }
+    // };
     pc.ontrack = (event) => {
-      console.log("event track is-", event);
+      const remoteStream = new MediaStream();
+      remoteStream.addTrack(event.track);
       if (videoRefSender.current) {
-        videoRefSender.current.srcObject = new MediaStream([event.track]);
-        setIsConnected(true);
-        setIsConnecting(false);
+        videoRefSender.current.srcObject = remoteStream;
       }
     };
 
@@ -80,7 +92,8 @@ export const Receiver = () => {
       videoRefOwn.current.srcObject = stream;
     }
 
-    pc.addTrack(stream.getVideoTracks()[0]);
+    // pc.addTrack(stream.getVideoTracks()[0]);
+    stream.getTracks().forEach((track) => pc.addTrack(track, stream));
   }
 
   return (

@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
+import { WebSocket_Deployed_URL } from "../contant";
 
 export const Sender = () => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const senderVideoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    const socket = new WebSocket("ws://localhost:8080");
+    const socket = new WebSocket(WebSocket_Deployed_URL);
     setSocket(socket);
     socket.onopen = () => {
       socket.send(
